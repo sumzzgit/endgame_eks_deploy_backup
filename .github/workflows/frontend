@@ -1,0 +1,61 @@
+name: Build Frontend Docker Image and Push it to ECR
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - 'frontend/**'
+
+jobs:
+  env:
+    ASSUME_ROLE_NAME: poc-github-actions-assume-role
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v
+
+    - name: Set Git user
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+
+    - name: Get the Git tag and the commit
+      run: GITTAG=$(git describe --tags)
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Frontend Docker Build and Tag
+      run: |
+        docker build -t frontend .
+        docker tag backend ${{ secrets.ACC_NO }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.FRONTEND_REPO_NAME }}:$GITTAG
+      working-directory: ./frontend
+
+    - name: Install Bandit
+      run: pip install bandit
+
+    - name: Bandit Scan
+      run: bandit -r . -f html -o bandit-report.html
+      continue-on-error: true
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Frontend Docker Image Scan Report
+        path: bandit-report.html
+
+    - name: Setup AWScli
+      uses: unfor19/install-aws-cli-action@v1
+
+    - name: Authenticate To AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ secrets.REGION }}
+        role-to-assume: ${{ env.ASSUME_ROLE_NAME }}
+        role-session-name: GitHub Federation
+
+    - name: Login to ECR
+      run: aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin ${{ secrets.ACC_NO }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
+
+    - name: Push Docker image
+      run: docker push ${{ secrets.ACC_NO }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.FRONTEND_REPO_NAME }}:$GITTAG
