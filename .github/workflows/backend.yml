@@ -1,7 +1,7 @@
 name: Build Backend Docker Image and Push it to ECR
 on:
   push:
-    branches: [ main ]
+    # branches: [ main ]
     paths:
     - 'backend/**'
 
