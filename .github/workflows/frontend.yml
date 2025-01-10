@@ -4,10 +4,10 @@ on:
     # branches: [ main ]
     paths:
     - 'frontend/**'
+env:
+  ASSUME_ROLE_NAME: poc-github-actions-assume-role
 
 jobs:
-  env:
-    ASSUME_ROLE_NAME: poc-github-actions-assume-role
   docker-build:
     runs-on: ubuntu-latest
     steps:

@@ -4,10 +4,9 @@ on:
     # branches: [ main ]
     paths:
     - 'backend/**'
-
+env:
+  ASSUME_ROLE_NAME: poc-github-actions-assume-role
 jobs:
-  env:
-    ASSUME_ROLE_NAME: poc-github-actions-assume-role
   docker-build:
     runs-on: ubuntu-latest
     steps:
