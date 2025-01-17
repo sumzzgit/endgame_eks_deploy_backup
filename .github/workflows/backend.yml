@@ -37,7 +37,7 @@ jobs:
     - name: Backend Docker Build and Tag
       run: |
         docker build -t backend:latest .
-        docker tag backend:latest "${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:${{ env.GITTAG }}"
+        docker tag backend:latest ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:${{ env.GITTAG }}
       working-directory: ./backend
 
     - name: Install Bandit
@@ -61,10 +61,10 @@ jobs:
       with:
         aws-region: ${{ env.REGION }}
         role-to-assume: ${{ env.ASSUME_ROLE_ARN }}
-        role-session-name: GitHub Federation  
+        role-session-name: GitHubFederation  
 
     - name: Login to ECR
       run: aws ecr get-login-password --region ${{ env.REGION }} | docker login --username AWS --password-stdin ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com
 
     - name: Push Docker image
-      run: docker push "${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:${{ env.GITTAG }}"
+      run: docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:${{ env.GITTAG }}

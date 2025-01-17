@@ -26,7 +26,9 @@ jobs:
         git config --global user.email "actions@github.com"
 
     - name: Get the Git tag and the commit
-      run: echo "GITTAG=$(git describe --tags)" >> $GITHUB_ENV
+      run: | 
+        GITTAG=$(git describe --tags)
+        echo "GITTAG=${GITTAG}" >> $GITHUB_ENV
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -34,7 +36,7 @@ jobs:
     - name: Frontend Docker Build and Tag
       run: |
         docker build -t frontend .
-        docker tag backend ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:$GITTAG
+        docker tag backend ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:${{ env.GITTAG }}
       working-directory: ./frontend
 
     - name: Install Bandit
@@ -58,10 +60,10 @@ jobs:
       with:
         aws-region: ${{ env.REGION }}
         role-to-assume: ${{ env.ASSUME_ROLE_ARN }}
-        role-session-name: GitHub Federation
+        role-session-name: GitHubFederation
 
     - name: Login to ECR
       run: aws ecr get-login-password --region ${{ env.REGION }} | docker login --username AWS --password-stdin ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com
 
     - name: Push Docker image
-      run: docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:$GITTAG
+      run: docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:${{ env.GITTAG }}
