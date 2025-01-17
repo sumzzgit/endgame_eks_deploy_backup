@@ -22,7 +22,9 @@ jobs:
         git config --global user.email "actions@github.com"
 
     - name: Get the Git tag and the commit
-      run: echo "GITTAG=$(git describe --tags)" >> $GITHUB_ENV
+      run: | 
+        GITTAG=$(git describe --tags)
+        echo $GITTAG
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -30,7 +32,6 @@ jobs:
     - name: Backend Docker Build and Tag
       run: |
         docker build -t backend:latest .
-        echo $GITTAG
         docker tag backend:latest "${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:$GITTAG"
       working-directory: ./backend
 
