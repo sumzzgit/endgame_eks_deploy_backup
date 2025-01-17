@@ -6,7 +6,6 @@ on:
     - 'frontend/**'
 env:
   ASSUME_ROLE_NAME: poc-github-actions-assume-role
-  ASSUME_ROLE_NAME: poc-github-actions-assume-role
   ACC_NO: ${{ secrets.ACC_NO }}
   REGION: ${{ secrets.REGION }}
   FRONTEND_REPO_NAME: ${{ secrets.FRONTEND_REPO_NAME }}
@@ -14,6 +13,9 @@ env:
 jobs:
   docker-build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: Check out code
       uses: actions/checkout@v4
