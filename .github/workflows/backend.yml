@@ -30,6 +30,7 @@ jobs:
     - name: Backend Docker Build and Tag
       run: |
         docker build -t backend:latest .
+        echo $GITTAG
         docker tag backend:latest "${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.BACKEND_REPO_NAME }}:$GITTAG"
       working-directory: ./backend
 
