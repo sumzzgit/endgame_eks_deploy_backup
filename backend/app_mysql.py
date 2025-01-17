@@ -66,6 +66,13 @@ def listreviews():
 
     return {"success":True,"list":reviews}
 
+@app.route("/healthz",methods=["GET"])
+def listreviews():
+
+    reviews = load_reviews()
+
+    return {"success":True,"list":reviews}
+
 #Deferred execution by 20 seconds to allow database to initialize
 time.sleep(20)
 init_tables()
