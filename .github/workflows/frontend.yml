@@ -5,7 +5,7 @@ on:
     paths:
     - 'frontend/**'
 env:
-  ASSUME_ROLE_NAME: poc-github-actions-assume-role
+  ASSUME_ROLE_ARN: ${{ secrets.ASSUME_ROLE_ARN }}
   ACC_NO: ${{ secrets.ACC_NO }}
   REGION: ${{ secrets.REGION }}
   FRONTEND_REPO_NAME: ${{ secrets.FRONTEND_REPO_NAME }}
@@ -57,7 +57,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ env.REGION }}
-        role-to-assume: ${{ env.ASSUME_ROLE_NAME }}
+        role-to-assume: ${{ env.ASSUME_ROLE_ARN }}
         role-session-name: GitHub Federation
 
     - name: Login to ECR
