@@ -10,6 +10,9 @@ class Review(object):
         
 app = Flask(__name__)
 
+# Get the backend URL from the environment variable
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000")  # Default to "http://backend:5000" if not set
+
 @app.route("/",methods=["POST","GET"])
 def index():
 
@@ -17,7 +20,7 @@ def index():
         name = request.form["name"]
         review = request.form["review"]
 
-        res = requests.post("http://backend:5000/reviews/add",data={"name":name,"review":review})
+        res = requests.post(f"{BACKEND_URL}/reviews/add",data={"name":name,"review":review})
 
         if res.status_code == 200:
             return redirect("/reviews")
@@ -27,7 +30,7 @@ def index():
 @app.route("/reviews",methods=["GET"])
 def reviews():
 
-    res = requests.post("http://backend:5000/reviews/list").json()
+    res = requests.post(f"{BACKEND_URL}/reviews/list").json()
     reviews = []
 
     for review in res["list"]:
