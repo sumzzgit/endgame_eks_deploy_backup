@@ -40,6 +40,7 @@ jobs:
       run: |
         docker build -t frontend .
         docker tag frontend:latest ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:${{ env.GITTAG }}
+        docker tag frontend:latest ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:latest
       working-directory: ./frontend
 
     - name: Install Bandit
@@ -69,4 +70,6 @@ jobs:
       run: aws ecr get-login-password --region ${{ env.REGION }} | docker login --username AWS --password-stdin ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com
 
     - name: Push Docker image
-      run: docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:${{ env.GITTAG }}
+      run: |
+        docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:${{ env.GITTAG }}
+        docker push ${{ env.ACC_NO }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.FRONTEND_REPO_NAME }}:latest
